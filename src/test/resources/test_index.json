@@ -1,0 +1,46 @@
+{
+  "settings": {
+    "index": {
+      "codec": "best_compression",
+      "number_of_shards": 3,
+      "number_of_replicas": 1,
+      "refresh_interval": "60s",
+      "knn": true,
+      "knn.algo_param.ef_search": 100
+    }
+  },
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "indexingDate": {
+        "type": "date",
+        "format": "date_time||date_time_no_millis"
+      },
+      "keywords": {
+        "type": "keyword"
+      },
+      "vector": {
+        "type": "knn_vector",
+        "dimension": 1024,
+        "method": {
+          "name": "hnsw",
+          "space_type": "innerproduct",
+          "engine": "faiss",
+          "parameters": {
+            "ef_construction": 500,
+            "m": 8,
+            "encoder":{
+              "name":"sq",
+              "parameters":{
+                "type": "fp16"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

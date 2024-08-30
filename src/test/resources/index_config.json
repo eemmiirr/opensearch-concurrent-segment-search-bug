@@ -1,0 +1,6 @@
+{
+  "persistent":{
+    "search.concurrent_segment_search.enabled": true,
+    "action.auto_create_index": false
+  }
+}
