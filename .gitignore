@@ -1,0 +1,46 @@
+### gradle ###
+**/.gradle/*
+.dependency-check
+
+### maven ###
+!.mvn/wrapper/maven-wrapper.jar
+
+### build ###
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+*.DS_Store
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Ignore generated client
+/client
+/generated/openapi.json
+
+version.txt
