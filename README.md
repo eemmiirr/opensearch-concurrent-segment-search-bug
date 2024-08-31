@@ -6,7 +6,7 @@ concurrent segment search is to perform a forced merge operation.
 
 The bug is triggered when executing the same search on a random dataset after purging and 
 re-inserting the documents between runs. The test that highlights this issue 
-is `OpenSearchRepositoryTest.triggerConcurrentSegmentSearchBug`.
+is `OpenSearchRepositoryTest.triggerConcurrentSegmentSearchBug3Docs` and `OpenSearchRepositoryTest.triggerConcurrentSegmentSearchBugMultipleDocs`.
 
 ## How to run
 ```bash

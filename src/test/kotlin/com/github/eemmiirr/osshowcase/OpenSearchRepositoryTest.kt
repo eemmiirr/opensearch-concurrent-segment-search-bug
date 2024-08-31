@@ -11,7 +11,7 @@ class OpenSearchRepositoryTest : AbstractIntegrationTest() {
     private lateinit var openSearchRepository: OpenSearchRepository
 
     @Test
-    fun `trigger concurrent segment search bug`() {
+    fun `trigger concurrent segment search bug - 3 docs`() {
         for (i in 1..100) {
             println("Iteration $i")
 
@@ -32,6 +32,26 @@ class OpenSearchRepositoryTest : AbstractIntegrationTest() {
             val result = openSearchRepository.search(listOf("keyword 2", "keyword 3"), vector = generateVector(1024, 1.0f))
 
             assertThat(result).isEqualTo(listOf(id3, id2, id1))
+            deleteAllDocuments("test")
+        }
+    }
+
+    @Test
+    fun `trigger concurrent segment search bug - multiple docs`() {
+        for (i in 1..100) {
+            println("Iteration $i")
+
+            val ids = (1..20).map {
+                openSearchRepository.persist(
+                    Document(keywords = listOf("keyword $it"), vector = generateVector(1024, 1.0f)),
+                )
+            }
+            val keywords = (1..18).map { "keyword $it" }
+            refreshIndexes()
+
+            val result = openSearchRepository.search(keywords, vector = generateVector(1024, 1.0f))
+
+            assertThat(result).isEqualTo(ids.reversed())
             deleteAllDocuments("test")
         }
     }
