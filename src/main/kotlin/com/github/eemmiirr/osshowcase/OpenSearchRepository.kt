@@ -1,10 +1,12 @@
 package com.github.eemmiirr.osshowcase
 
 import com.github.eemmiirr.osshowcase.model.Document
+import java.lang.IllegalStateException
 import org.apache.commons.lang3.ArrayUtils
 import org.opensearch.client.opensearch.OpenSearchClient
 import org.opensearch.client.opensearch._types.FieldSort
 import org.opensearch.client.opensearch._types.FieldValue
+import org.opensearch.client.opensearch._types.ShardFailure
 import org.opensearch.client.opensearch._types.SortOptions
 import org.opensearch.client.opensearch._types.SortOrder
 import org.opensearch.client.opensearch._types.query_dsl.QueryBuilders
@@ -29,7 +31,7 @@ class OpenSearchRepository(val openSearchClient: OpenSearchClient) {
         keywords: List<String>,
         vector: List<Float>,
     ): List<String> {
-        return openSearchClient.search(
+        val response = openSearchClient.search(
             SearchRequest.of {
                 it.index("test")
                     .pipeline("nlp-search-pipeline")
@@ -59,6 +61,22 @@ class OpenSearchRepository(val openSearchClient: OpenSearchClient) {
                     )
             },
             Document::class.java,
-        ).hits().hits().map { it.id()!! }
+        )
+
+        val failures = response.shards()
+            .failures()
+            .map { failure: ShardFailure ->
+                if (failure.reason().causedBy() != null) {
+                    failure.reason().causedBy()!!.reason()
+                } else {
+                    failure.reason().reason()
+                }
+            }
+
+        return if (failures.isNotEmpty()) {
+            throw IllegalStateException("OpenSearch response contains a failures. Failures: ${failures} ")
+        } else {
+            response.hits().hits().map { it.id()!! }
+        }
     }
 }
